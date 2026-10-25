@@ -1,0 +1,416 @@
+-- ==================== ล้าง GUI เก่าป้องกันสคริปต์ซ้ำ ====================
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+
+if CoreGui:FindFirstChild("MaxHubShooterEdition") then 
+    CoreGui.MaxHubShooterEdition:Destroy() 
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "MaxHubShooterEdition"
+ScreenGui.ResetOnSpawn = false
+
+if gethui then
+    ScreenGui.Parent = gethui()
+elseif syn and syn.protect_gui then
+    syn.protect_gui(ScreenGui)
+    ScreenGui.Parent = CoreGui
+else
+    ScreenGui.Parent = CoreGui
+end
+
+-- ==================== 1. ปุ่มลอยวงกลม MAX ====================
+local OpenBtn = Instance.new("TextButton")
+OpenBtn.Parent = ScreenGui
+OpenBtn.Position = UDim2.new(0.02, 0, 0.4, 0)
+OpenBtn.Size = UDim2.new(0, 50, 0, 50)
+OpenBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+OpenBtn.Font = Enum.Font.SourceSansBold
+OpenBtn.Text = "MAX"
+OpenBtn.TextColor3 = Color3.fromRGB(0, 255, 150)
+OpenBtn.TextSize = 18
+OpenBtn.Active = true
+OpenBtn.Draggable = true
+
+local OpenCorner = Instance.new("UICorner")
+OpenCorner.CornerRadius = UDim.new(1, 0)
+OpenCorner.Parent = OpenBtn
+
+local OpenStroke = Instance.new("UIStroke")
+OpenStroke.Color = Color3.fromRGB(0, 255, 150)
+OpenStroke.Thickness = 2
+OpenStroke.Parent = OpenBtn
+
+-- ==================== 2. หน้าต่างหลัก (Main Frame) ====================
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+MainFrame.Position = UDim2.new(0.2, 0, 0.1, 0)
+MainFrame.Size = UDim2.new(0, 320, 0, 440)
+MainFrame.Visible = false
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 10)
+MainCorner.Parent = MainFrame
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(0, 255, 150)
+MainStroke.Thickness = 1.5
+MainStroke.Parent = MainFrame
+
+-- แถบหัวข้อด้านบน
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Parent = MainFrame
+TitleLabel.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Text = "   🔫 MAX HUB | SHOOTER EDITION"
+TitleLabel.TextColor3 = Color3.fromRGB(0, 255, 150)
+TitleLabel.TextSize = 15
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.CornerRadius = UDim.new(0, 10)
+TitleCorner.Parent = TitleLabel
+
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Parent = TitleLabel
+CloseBtn.Position = UDim2.new(1, -30, 0, 3)
+CloseBtn.Size = UDim2.new(0, 26, 0, 26)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 70)
+CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize = 14
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 6)
+CloseCorner.Parent = CloseBtn
+
+-- 🖼️ ภาพแบนเนอร์ MAX HUB
+local BannerImage = Instance.new("ImageLabel")
+BannerImage.Parent = MainFrame
+BannerImage.Position = UDim2.new(0, 8, 0, 40)
+BannerImage.Size = UDim2.new(1, -16, 0, 80)
+BannerImage.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+BannerImage.Image = "rbxassetid://7072718362"
+BannerImage.ScaleType = Enum.ScaleType.Crop
+
+local BannerCorner = Instance.new("UICorner")
+BannerCorner.CornerRadius = UDim.new(0, 8)
+BannerCorner.Parent = BannerImage
+
+local BannerText = Instance.new("TextLabel")
+BannerText.Parent = BannerImage
+BannerText.Size = UDim2.new(1, 0, 1, 0)
+BannerText.BackgroundTransparency = 1
+BannerText.Font = Enum.Font.SourceSansBold
+BannerText.Text = "MAX HUB"
+BannerText.TextColor3 = Color3.fromRGB(255, 255, 255)
+BannerText.TextSize = 28
+BannerText.TextStrokeTransparency = 0.2
+
+OpenBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
+
+-- ==================== 3. แถบข้าง (Tab Sidebar) ====================
+local TabSidebar = Instance.new("Frame")
+TabSidebar.Parent = MainFrame
+TabSidebar.Position = UDim2.new(0, 8, 0, 128)
+TabSidebar.Size = UDim2.new(0, 85, 1, -136)
+TabSidebar.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+
+local SidebarCorner = Instance.new("UICorner")
+SidebarCorner.CornerRadius = UDim.new(0, 8)
+SidebarCorner.Parent = TabSidebar
+
+local TabListLayout = Instance.new("UIListLayout")
+TabListLayout.Parent = TabSidebar
+TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+TabListLayout.Padding = UDim.new(0, 6)
+
+-- ==================== 4. พื้นที่เนื้อหา (Containers) ====================
+local MainContainer = Instance.new("ScrollingFrame")
+MainContainer.Parent = MainFrame
+MainContainer.Position = UDim2.new(0, 100, 0, 128)
+MainContainer.Size = UDim2.new(1, -108, 1, -136)
+MainContainer.BackgroundTransparency = 1
+MainContainer.CanvasSize = UDim2.new(0, 0, 0, 360)
+MainContainer.ScrollBarThickness = 3
+MainContainer.Visible = true
+
+local MainLayout = Instance.new("UIListLayout")
+MainLayout.Parent = MainContainer
+MainLayout.Padding = UDim.new(0, 8)
+
+local function createTabBtn(text, targetContainer)
+    local btn = Instance.new("TextButton")
+    btn.Parent = TabSidebar
+    btn.Size = UDim2.new(1, 0, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(0, 255, 150)
+    btn.Font = Enum.Font.SourceSansSemibold
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(15, 15, 20)
+    btn.TextSize = 13
+
+    local bCorner = Instance.new("UICorner")
+    bCorner.CornerRadius = UDim.new(0, 6)
+    bCorner.Parent = btn
+    return btn
+end
+
+createTabBtn("💥 Main", MainContainer)
+
+-- ==================== Helper Functions ====================
+local function createBtn(parent, text, callback)
+    local btn = Instance.new("TextButton")
+    btn.Parent = parent
+    btn.Size = UDim2.new(1, 0, 0, 34)
+    btn.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+    btn.Font = Enum.Font.SourceSansSemibold
+    btn.Text = text .. ": OFF"
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 13
+
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 6)
+    btnCorner.Parent = btn
+
+    local enabled = false
+    btn.MouseButton1Click:Connect(function()
+        enabled = not enabled
+        if enabled then
+            btn.BackgroundColor3 = Color3.fromRGB(0, 200, 120)
+            btn.Text = text .. ": ON"
+        else
+            btn.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+            btn.Text = text .. ": OFF"
+        end
+        pcall(function() callback(enabled) end)
+    end)
+    return btn
+end
+
+local function createSlider(parent, text, min, max, default, callback)
+    local frame = Instance.new("Frame")
+    frame.Parent = parent
+    frame.Size = UDim2.new(1, 0, 0, 42)
+    frame.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+    
+    local fCorner = Instance.new("UICorner")
+    fCorner.CornerRadius = UDim.new(0, 6)
+    fCorner.Parent = frame
+
+    local label = Instance.new("TextLabel")
+    label.Parent = frame
+    label.Size = UDim2.new(1, 0, 0, 18)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.SourceSansSemibold
+    label.Text = text .. ": " .. tostring(default)
+    label.TextColor3 = Color3.fromRGB(220, 220, 220)
+    label.TextSize = 12
+
+    local sliderBtn = Instance.new("TextButton")
+    sliderBtn.Parent = frame
+    sliderBtn.Position = UDim2.new(0.05, 0, 0.55, 0)
+    sliderBtn.Size = UDim2.new(0.9, 0, 0, 10)
+    sliderBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+    sliderBtn.Text = ""
+
+    local fill = Instance.new("Frame")
+    fill.Parent = sliderBtn
+    fill.Size = UDim2.new((default - min)/(max - min), 0, 1, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(0, 255, 150)
+    fill.BorderSizePixel = 0
+
+    local dragging = false
+    local function update(input)
+        local pos = math.clamp((input.Position.X - sliderBtn.AbsolutePosition.X) / sliderBtn.AbsoluteSize.X, 0, 1)
+        local value = math.floor(min + (max - min) * pos)
+        fill.Size = UDim2.new(pos, 0, 1, 0)
+        label.Text = text .. ": " .. tostring(value)
+        pcall(function() callback(value) end)
+    end
+
+    sliderBtn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            update(input)
+        end
+    end)
+    game:GetService("UserInputService").InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            update(input)
+        end
+    end)
+end
+
+-- ==================== 5 FUNCTIONS LOGIC ====================
+
+-- 1. ยิงไกลขึ้น (Extended Bullet Range / Hitbox Multiplier)
+local rangeActive = false
+local rangeLoop
+createBtn(MainContainer, "🔫 ยิงไกลขึ้น (Extended Range)", function(state)
+    rangeActive = state
+    if state then
+        rangeLoop = RunService.RenderStepped:Connect(function()
+            pcall(function()
+                for _, p in pairs(Players:GetPlayers()) do
+                    if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
+                        p.Character.Head.Size = Vector3.new(3, 3, 3)
+                        p.Character.Head.Transparency = 0.5
+                        p.Character.Head.CanCollide = false
+                    end
+                end
+            end)
+        end)
+    else
+        if rangeLoop then rangeLoop:Disconnect() end
+        for _, p in pairs(Players:GetPlayers()) do
+            pcall(function()
+                if p.Character and p.Character:FindFirstChild("Head") then
+                    p.Character.Head.Size = Vector3.new(1.2, 1.2, 1.2)
+                    p.Character.Head.Transparency = 0
+                end
+            end)
+        end
+    end
+end)
+
+-- 2. วิ่งเร็ว (ปรับได้ 1-500)
+local runSpeed = 60
+local speedActive = false
+
+createSlider(MainContainer, "⚡ ความเร็วการวิ่ง", 1, 500, 60, function(v) runSpeed = v end)
+
+createBtn(MainContainer, "⚡ เปิด/ปิด วิ่งเร็ว (Speed)", function(state)
+    speedActive = state
+    task.spawn(function()
+        while speedActive do
+            RunService.RenderStepped:Wait()
+            pcall(function()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
+                    if char.Humanoid.MoveDirection.Magnitude > 0 then
+                        char.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame + (char.Humanoid.MoveDirection * (runSpeed / 45))
+                    end
+                end
+            end)
+        end
+    end)
+end)
+
+-- 3. ปุ่มเสกไม้ (Spawn Wood Block)
+local woodBtn = Instance.new("TextButton")
+woodBtn.Parent = MainContainer
+woodBtn.Size = UDim2.new(1, 0, 0, 34)
+woodBtn.BackgroundColor3 = Color3.fromRGB(160, 90, 40)
+woodBtn.Font = Enum.Font.SourceSansBold
+woodBtn.Text = "🪵 เสกไม้ (Spawn Wood Part)"
+woodBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+woodBtn.TextSize = 13
+
+local woodCorner = Instance.new("UICorner")
+woodCorner.CornerRadius = UDim.new(0, 6)
+woodCorner.Parent = woodBtn
+
+woodBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            local woodPart = Instance.new("Part")
+            woodPart.Name = "Max_WoodPart"
+            woodPart.Size = Vector3.new(4, 4, 4)
+            woodPart.Color = Color3.fromRGB(133, 94, 66)
+            woodPart.Material = Enum.Material.Wood
+            woodPart.CFrame = char.HumanoidRootPart.CFrame + (char.HumanoidRootPart.CFrame.LookVector * 6)
+            woodPart.Parent = workspace
+        end
+    end)
+end)
+
+-- 4. มอง ESP (Highlight)
+local espLoop
+createBtn(MainContainer, "👁️ มอง ESP (มองทะลุ)", function(state)
+    if state then
+        espLoop = RunService.RenderStepped:Connect(function()
+            for _, p in pairs(Players:GetPlayers()) do
+                pcall(function()
+                    if p ~= LocalPlayer and p.Character then
+                        local hl = p.Character:FindFirstChild("Max_ESP_Highlight")
+                        if not hl then
+                            hl = Instance.new("Highlight")
+                            hl.Name = "Max_ESP_Highlight"
+                            hl.FillColor = Color3.fromRGB(0, 255, 150)
+                            hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                            hl.FillTransparency = 0.4
+                            hl.Parent = p.Character
+                        end
+                    end
+                end)
+            end
+        end)
+    else
+        if espLoop then espLoop:Disconnect() end
+        for _, p in pairs(Players:GetPlayers()) do
+            pcall(function()
+                if p.Character and p.Character:FindFirstChild("Max_ESP_Highlight") then
+                    p.Character.Max_ESP_Highlight:Destroy()
+                end
+            end)
+        end
+    end
+end)
+
+-- 5. ดูชื่อคนในเกม (Player Nametags)
+local nametagLoop
+createBtn(MainContainer, "🏷️ ดูชื่อคนในเกม (Nametags)", function(state)
+    if state then
+        nametagLoop = RunService.RenderStepped:Connect(function()
+            for _, p in pairs(Players:GetPlayers()) do
+                pcall(function()
+                    if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
+                        local bg = p.Character.Head:FindFirstChild("Max_Nametag")
+                        if not bg then
+                            bg = Instance.new("BillboardGui")
+                            bg.Name = "Max_Nametag"
+                            bg.Size = UDim2.new(0, 100, 0, 30)
+                            bg.StudsOffset = Vector3.new(0, 2.5, 0)
+                            bg.AlwaysOnTop = true
+                            bg.Parent = p.Character.Head
+
+                            local txt = Instance.new("TextLabel")
+                            txt.Parent = bg
+                            txt.Size = UDim2.new(1, 0, 1, 0)
+                            txt.BackgroundTransparency = 1
+                            txt.Text = p.DisplayName .. " (@" .. p.Name .. ")"
+                            txt.TextColor3 = Color3.fromRGB(255, 255, 0)
+                            txt.Font = Enum.Font.SourceSansBold
+                            txt.TextSize = 14
+                            txt.TextStrokeTransparency = 0
+                        end
+                    end
+                end)
+            end
+        end)
+    else
+        if nametagLoop then nametagLoop:Disconnect() end
+        for _, p in pairs(Players:GetPlayers()) do
+            pcall(function()
+                if p.Character and p.Character:FindFirstChild("Head") and p.Character.Head:FindFirstChild("Max_Nametag") then
+                    p.Character.Head.Max_Nametag:Destroy()
+                end
+            end)
+        end
+    end
+end)
